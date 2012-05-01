@@ -12,7 +12,10 @@ import javax.swing.JPanel;
 
 public class MainView extends JPanel{
 	private ArrayList<Starling> starlings;
+	private ArrayList<Preditor> preditors;
+	//private boolean simulatePreditors = false;
 	private BufferedImage background;
+	
 	public MainView(){
 		File file = new File("images/backgroundImg.JPG");
 		
@@ -28,12 +31,20 @@ public class MainView extends JPanel{
 		this.starlings = starlings;
 	}
 	
+	public void addPreditors(ArrayList<Preditor> preditors){
+		this.preditors = preditors;
+	}
+	
 	public void paintComponent(Graphics g){
 		super.paintComponents(g);
 		g.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), this);
 		
 		for(Starling starling : starlings){
 			g.drawImage(starling.getStarlingImage(), (int)starling.getPossition().getX(), (int)starling.getPossition().getY(), this);
+		}
+
+		for(Preditor preditor : preditors){
+			g.drawImage(preditor.getPreditorImage(), (int)preditor.getPossition().getX(), (int)preditor.getPossition().getY(), this);
 		}
 		
 	}

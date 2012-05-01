@@ -3,6 +3,7 @@ package v2;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.TextField;
 import java.awt.Toolkit;
 import java.util.Hashtable;
@@ -31,6 +32,7 @@ public class Simulator implements Runnable{
 	private final int MAXSPEED = 150;
 	private final int MINSPEED = 50;
 	private JCheckBox simulatePeir = new JCheckBox("Simulate Peir");
+	private JCheckBox simulatePreditors = new JCheckBox("Simulate Preditors");
 	
 	public Simulator(){
 		model = Model.getInstance();
@@ -49,6 +51,7 @@ public class Simulator implements Runnable{
 		mainview.addMouseMotionListener(mouseListener);
 		window.add(BorderLayout.CENTER, mainview);
 		mainview.addStarlings(model.getStarlings());
+		mainview.addPreditors(model.getPreditors());
 		Dimension d = new Dimension();
 		d.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, (int) (Toolkit.getDefaultToolkit().getScreenSize().height*0.15));
 		userInterface.setPreferredSize(d);
@@ -64,7 +67,7 @@ public class Simulator implements Runnable{
 		userInterface.add(numOfStarlings);
 		
 		JLabel agilityLabel = new JLabel("Agility:");
-		agility = new TextField("25",5);
+		agility = new TextField("40",5);
 		userInterface.add(agilityLabel);
 		userInterface.add(agility);
 		
@@ -85,10 +88,15 @@ public class Simulator implements Runnable{
 		
 		JPanel borderPanel = new JPanel();
 		CheckboxChangeListener changeListener = new CheckboxChangeListener();
+		borderPanel.setLayout(new GridLayout(0,1));
 		borderPanel.setBorder(BorderFactory.createEtchedBorder());
 		simulatePeir.setSelected(true);
 		simulatePeir.addChangeListener(changeListener);
+		simulatePreditors.setSelected(false);
+		simulatePreditors.addChangeListener(changeListener);
+		borderPanel.add(simulatePreditors);
 		borderPanel.add(simulatePeir);
+		
 		userInterface.add(borderPanel);
 		
 		JButton resetButton = new JButton("Stop");
@@ -111,6 +119,9 @@ public class Simulator implements Runnable{
 			model.setAgility(Integer.parseInt(agility.getText()));
 			model.setStarlingDistance(Integer.parseInt(distance.getText()));
 			model.createStarlings(Integer.parseInt(numOfStarlings.getText()));
+			if(simulatePreditors.isSelected()){
+				model.createPreditors(1);
+			}
 			Thread runner = new Thread(this);
 			runner.start();
 			
@@ -126,6 +137,9 @@ public class Simulator implements Runnable{
 				System.out.println("Runner thread interrupted:\n"+e);
 			}
 			model.updateStarlings();
+			if(simulatePreditors.isSelected()){
+				model.updatePreditors();
+			}
 			window.repaint();
 		}
 		
@@ -135,6 +149,7 @@ public class Simulator implements Runnable{
 	public void stop(){
 		running = false;
 		model.removeAllStarlings();
+		model.removeAllPreditors();
 		window.repaint();
 	}
 

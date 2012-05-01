@@ -11,17 +11,15 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 
-public class Starling{
+public class Starling extends Boid{
 	
-	private Vector possition;
-	private Vector velocity;
-	private double heading;
-	private BufferedImage starlingBuffImage;
 	private boolean perching = false;
 	private int perchingTimer;
-	
+	private BufferedImage starlingBuffImage;
 	
 	public Starling(){
+		super();
+		
 		File file = new File("images/twitter_bird.png");
 		if(file.exists()){
 			System.out.println("found file");
@@ -32,34 +30,6 @@ public class Starling{
 			System.out.println("Couldn't create buffered image from file: "+file.getPath());
 			e.printStackTrace();
 		}
-		
-		possition = new Vector();
-		velocity = new Vector();
-	}
-	
-	public Vector getPossition(){
-		return possition;
-	}
-	
-	public Vector getVelocity(){
-		return velocity;
-	}
-	public void setPossition(Vector possition){
-		this.possition = possition;
-	}
-	public void setVelocity(Vector velocity){
-		this.velocity = velocity;
-	}
-	
-	public double getHeading(){
-		return heading;
-	}
-	public BufferedImage getStarlingImage(){
-		return starlingBuffImage;
-	}
-	
-	public void setHeading(double h){
-		this.heading = h;
 	}
 	
 	public boolean perching(){
@@ -74,6 +44,8 @@ public class Starling{
 	public void setPerchingTimer(int p){
 		perchingTimer = p;
 	}
-	
+	public BufferedImage getStarlingImage(){
+		return starlingBuffImage;
+	}
 	
 }

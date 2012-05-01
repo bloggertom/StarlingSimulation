@@ -12,8 +12,19 @@ public class CheckboxChangeListener implements ChangeListener{
 		if(state.getSource() instanceof JCheckBox){
 			System.out.println("Is instance of JCheckBox");
 			JCheckBox checker = (JCheckBox) state.getSource();
-			System.out.println(checker.isSelected());
-			model.setSimulatePear(checker.isSelected());
+			
+			if(checker.getText().equals("Simulate Peir")){
+				System.out.println(checker.getText());
+				model.setSimulatePear(checker.isSelected());
+			}else if(checker.getText().equals("Simulate Preditors")){
+				System.out.println(checker.getText());
+				model.setSimulatePreditors(checker.isSelected());
+				if(checker.isSelected()){
+					model.createPreditors(1);
+				}else{
+					model.removeAllPreditors();
+				}
+			}
 		}
 	}
 

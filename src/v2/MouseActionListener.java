@@ -20,11 +20,13 @@ public class MouseActionListener implements MouseListener, MouseMotionListener{
 	@Override
 	public void mouseEntered(MouseEvent mouse) {
 		entered = true;
+		model.setMouseOnScreen(entered);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent mouse) {
 		entered = false;
+		model.setMouseOnScreen(entered);
 		model.setMouseX((int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.75));
 		model.setMouseY((int)(Toolkit.getDefaultToolkit().getScreenSize().height * 0.25));
 		System.out.println("Mouse Exit");
