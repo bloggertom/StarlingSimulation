@@ -1,5 +1,8 @@
 package v2;
 
+/*
+ * The main view which displayes the starlings current possition.
+ */
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -11,12 +14,13 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class MainView extends JPanel{
-	private ArrayList<Starling> starlings;
-	private ArrayList<Preditor> preditors;
+	private ArrayList<Starling> starlings; //starlings
+	private ArrayList<Preditor> preditors; //preditors
 	//private boolean simulatePreditors = false;
 	private BufferedImage background;
 	
 	public MainView(){
+		//load background image
 		File file = new File("images/backgroundImg.JPG");
 		
 		try {
@@ -27,14 +31,23 @@ public class MainView extends JPanel{
 		}
 	}
 	
+	/*
+	 * Starlings to be shown
+	 */
 	public void addStarlings(ArrayList<Starling> starlings){
 		this.starlings = starlings;
 	}
-	
+	/*
+	 * preditors to be shown
+	 */
 	public void addPreditors(ArrayList<Preditor> preditors){
 		this.preditors = preditors;
 	}
 	
+	/*
+	 * Pains graphics on the main view including starlings and preditors
+	 * from the two array lists 
+	 */
 	public void paintComponent(Graphics g){
 		super.paintComponents(g);
 		g.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), this);

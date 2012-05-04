@@ -9,25 +9,34 @@ import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Random;
 
+/*
+ * This class holds the starling data and updates their location at each cycle of the program
+ */
 
 public class Model {
-	private ArrayList<Starling> starlings;
-	private ArrayList<Preditor> preditors;
-	private static Model model;
-	private boolean simulatePeir;
-	private boolean simulatePreditors;
-	private boolean mouseOnScreen;
-	private double speedCap = 60;
-	private int pervcivedVolocityFractionToAdd = 20;
-	private int distanceToKeep = 10;
-	private int agility = 25;
+	private ArrayList<Starling> starlings;	//starlings
+	private ArrayList<Preditor> preditors;	//preditors
+	private static Model model;				//model instance
+	private boolean simulatePeir;			//should simulate pier
+	private boolean simulatePreditors;		//should simulate preditors
+	private boolean mouseOnScreen;			//mouse is currently on screen
+	private double speedCap = 75;	//Maximum speed starlings my travel
+	private int cohesion = 100;
+	private int pervcivedVolocityFractionToAdd = 20;		// amount moved in average heading of flock
+	private int distanceToKeep = 10;		//distance to keep from each other
+	private int agility = 25;				//pull towards/away from objects
+	private int neighbourhood = 175;
 	private int tendancyX = (int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.75), tendancyY = (int)(Toolkit.getDefaultToolkit().getScreenSize().height * 0.25);
+								//possition to which the starlings are attracted to.
 	
 	private Model(){
 		starlings = new ArrayList<Starling>();
 		preditors = new ArrayList<Preditor>();
 	}
 	
+	/*
+	 * singleton method for access to model instance.
+	 */
 	public static Model getInstance(){
 		if(model == null){
 			model = new Model();
@@ -41,19 +50,29 @@ public class Model {
 		return preditors;
 	}
 	
+	/*
+	 * Updates starling location
+	 */
 	public void updateStarlings(){
+		//for each starling in the starlings array list
 		Simulation:
 		for(Starling starling : starlings){
 			
 			if(starling.perching()){
+				//if starling is perched
 				if(starling.perchingTimer() > 0){
+					//if the starlings perch timer is greater than 0
+					//depricate the timer by 1
 					starling.setPerchingTimer(starling.perchingTimer()-1);
+					//continue from Simulation
 					continue Simulation;
 				}else{
+					//if perch timer is <=0 set perching to false
 					starling.setPerching(false);
 				}
 			}
 			
+			//perform rules
 			Vector vector1 = this.flyTowardsCenterMass(starling);
 			Vector vector2 = this.keepingDistance(starling);
 			Vector vector3 = this.matchVelocity(starling);
@@ -61,7 +80,7 @@ public class Model {
 			
 			
 			
-			
+			//calculate new velocity
 			Vector newVelocity = 
 					Vector.addVectors(
 					Vector.addVectors(
@@ -77,20 +96,24 @@ public class Model {
 			
 			
 			if(simulatePreditors){
+				//if simulating preditors take preditors possition into account
 				newVelocity = Vector.addVectors(newVelocity, this.reactToPreditors(starling));
 				if(mouseOnScreen){
+					//if mouse is onscreen make starlings move towards it
 					Vector vector5 = this.setTendancy(starling);
 					newVelocity = Vector.addVectors(newVelocity,vector5);
 				}
 			}else{
+				//if preditors are not being simulated, send starlings towards default location
 				Vector vector5 = this.setTendancy(starling);
 				newVelocity = Vector.addVectors(newVelocity,vector5);
 			}
-			
-			Vector newPossition = Vector.addVectors(starling.getPossition(), newVelocity);
-			
+			//cap speed of starling
 			starling.setVelocity(newVelocity);
 			this.speedCap(starling);
+			
+			//add velocity to current possition to get new possition
+			Vector newPossition = Vector.addVectors(starling.getPossition(), starling.getVelocity());
 			starling.setPossition(newPossition);
 			
 		}
@@ -161,7 +184,7 @@ public class Model {
 		Vector center = new Vector();
 		for(Starling s : starlings){
 			if(s!=starling && !s.perching()){
-				if(Vector.subtractVectors(s.getPossition(), starling.getPossition()).getMagnitude() < 175){
+				if(Vector.subtractVectors(s.getPossition(), starling.getPossition()).getMagnitude() < neighbourhood){
 					center = Vector.addVectors(center, s.getPossition());
 				}
 			}
@@ -169,7 +192,7 @@ public class Model {
 		
 		center = Vector.divideVectorsByScaler(center, starlings.size()-1);
 		
-		return Vector.divideVectorsByScaler((Vector.subtractVectors(center, starling.getPossition())), 100);
+		return Vector.divideVectorsByScaler((Vector.subtractVectors(center, starling.getPossition())), cohesion);
 		
 	}
 	/*
@@ -303,12 +326,17 @@ public class Model {
 	public void setStarlingDistance(int distance){
 		distanceToKeep = distance;
 	}
-	
-	public void setAgility(int agility){
-		this.agility = agility;
+	public void setCohesion(int i){
+		this.cohesion = i;
+	}
+	public void setDistance(int i){
+		this.distanceToKeep = i;
 	}
 	public void setSpeedCap(int c){
 		this.speedCap = c;
+	}
+	public void setPercievedVelocity(int p){
+		this.pervcivedVolocityFractionToAdd = p;
 	}
 	public void setSimulatePreditors(boolean b){
 		this.simulatePreditors = b;

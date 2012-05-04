@@ -25,8 +25,11 @@ public class Simulator implements Runnable{
 	private MainView mainview;
 	private JPanel userInterface;
 	private TextField numOfStarlings;
-	private TextField agility;
-	private TextField distance;
+	//private TextField agility;
+	private JSlider cohesion;
+	private JSlider alignment;
+	private JSlider distance;
+	//private TextField distance;
 	private JSlider speedSlider;
 	private boolean running = false;
 	private final int MAXSPEED = 150;
@@ -66,14 +69,27 @@ public class Simulator implements Runnable{
 		numOfStarlings = new TextField("200",5);
 		userInterface.add(numOfStarlings);
 		
-		JLabel agilityLabel = new JLabel("Agility:");
-		agility = new TextField("40",5);
-		userInterface.add(agilityLabel);
-		userInterface.add(agility);
+		cohesion = new JSlider(JSlider.HORIZONTAL, 20, 200, 100);
+		cohesion.setBorder(BorderFactory.createTitledBorder("Cohesion"));
+		cohesion.setName("cohesion");
+		SliderListener listener = new SliderListener();
+		cohesion.addChangeListener(listener);
+		userInterface.add(cohesion);
 		
-		JLabel distanceLabel = new JLabel("<html>Starling to Starling <br />Distance:</html>");
-		userInterface.add(distanceLabel);
-		distance = new TextField("10", 5);
+		alignment = new JSlider(JSlider.HORIZONTAL, 5, 50, 20);
+		alignment.setBorder(BorderFactory.createTitledBorder("Alignment"));
+		alignment.setName("alignment");
+		alignment.addChangeListener(listener);
+		userInterface.add(alignment);
+		
+		
+		//JLabel distanceLabel = new JLabel("Separation");
+		//userInterface.add(distanceLabel);
+		//distance = new TextField("10", 5);
+		distance = new JSlider(JSlider.HORIZONTAL, 0, 30, 7);
+		distance.setBorder(BorderFactory.createTitledBorder("Separation"));
+		distance.setName("distance");
+		distance.addChangeListener(listener);
 		userInterface.add(distance);
 		
 		speedSlider = new JSlider(JSlider.HORIZONTAL, MINSPEED, MAXSPEED, 100);
@@ -116,9 +132,10 @@ public class Simulator implements Runnable{
 		if(!running){
 			running = true;
 			model.setSimulatePear(simulatePeir.isSelected());
-			model.setAgility(Integer.parseInt(agility.getText()));
-			model.setStarlingDistance(Integer.parseInt(distance.getText()));
+			model.setPercievedVelocity(alignment.getValue());
+			model.setStarlingDistance(distance.getValue());
 			model.createStarlings(Integer.parseInt(numOfStarlings.getText()));
+			model.setCohesion(cohesion.getValue());
 			if(simulatePreditors.isSelected()){
 				model.createPreditors(1);
 			}
